@@ -14,7 +14,7 @@
 
 .container-button {
   position: absolute;
-  top: 45%; /* Adjust this value to position the buttons vertically */
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -28,37 +28,47 @@
   width: 150px;
   height: 85px;
 }
-#gameList ul {
-  list-style: none;
-  padding: 0;
-}
-
-#gameList ul li {
-  padding: 10px 0;
-  font-size: 18px;
-  color: #000;
-}
-
-.Games {
-  color: azure;
-}
 
 .Arrow {
   position: absolute;
   top: 35%;
+  cursor: pointer;
 }
 
 #left {
   left: 17%;
-  animation: moveLeft 1s infinite;
+  animation: LeftArrow 1s infinite;
 }
 
 #right {
   left: 69%;
-  animation: moveRight 1s infinite;
+  animation: RigthArrow 1s infinite;
 }
 
-/* Responsive adjustments */
+@keyframes RigthArrow {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes LeftArrow {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-2%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 @media (max-width: 1200px) {
   .nes-btn {
     width: 120px;
@@ -81,26 +91,22 @@
   }
 }
 
-@keyframes moveLeft {
-  0% {
-    left: 17%;
-  }
-  50% {
-    left: 16%;
-  }
-  100% {
-    left: 17%;
-  }
+.slideshow-container {
+  position: absolute;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  overflow: hidden;
+  top: 27%;
+  left: 28%;
 }
 
-@keyframes moveRight {
-  0% {
-    left: 69%;
-  }
-  50% {
-    left: 70%;
-  }
-  100% {
-    left: 69%;
-  }
+.slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  min-width: 100%;
+  box-sizing: border-box;
 }
