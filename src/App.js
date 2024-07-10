@@ -1,10 +1,13 @@
 import logo from "./logo.svg";
 import { motion } from "framer-motion";
+import Home from "./components/Home.jsx"; // Make sure the path is correct
+import Navbar from "./components/Navbar.jsx"; // Make sure the path is correct
 
 // ceci est un commentaire
 function App() {
   return (
     <>
+      <Navbar />
       <header>
         <link
           href="https://fonts.googleapis.com/css?family=Press+Start+2P"
@@ -13,17 +16,7 @@ function App() {
         <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
       </header>
       <body>
-        <div>
-          <motion.div animate={{ x: 100 }} />
-          <motion.h1
-            className="text-red-300 text-8xl text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 4 }} // Adjust the duration as needed
-          >
-            Hello this is a test
-          </motion.h1>
-        </div>
+        <Home />
       </body>
     </>
   );

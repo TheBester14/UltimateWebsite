@@ -1,0 +1,106 @@
+.arcade-container {
+  position: relative;
+  width: 100%;
+  max-width: 2500px;
+  margin: 0 auto;
+}
+
+.arcade-img {
+  width: 100%;
+  height: 1250px;
+  display: block;
+  background-color: #171717;
+}
+
+.container-button {
+  position: absolute;
+  top: 45%; /* Adjust this value to position the buttons vertically */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.nes-btn {
+  width: 150px;
+  height: 85px;
+}
+#gameList ul {
+  list-style: none;
+  padding: 0;
+}
+
+#gameList ul li {
+  padding: 10px 0;
+  font-size: 18px;
+  color: #000;
+}
+
+.Games {
+  color: azure;
+}
+
+.Arrow {
+  position: absolute;
+  top: 35%;
+}
+
+#left {
+  left: 17%;
+  animation: moveLeft 1s infinite;
+}
+
+#right {
+  left: 69%;
+  animation: moveRight 1s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .nes-btn {
+    width: 120px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nes-btn {
+    width: 100px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nes-btn {
+    width: 80px;
+    height: 50px;
+    font-size: 10px;
+  }
+}
+
+@keyframes moveLeft {
+  0% {
+    left: 17%;
+  }
+  50% {
+    left: 16%;
+  }
+  100% {
+    left: 17%;
+  }
+}
+
+@keyframes moveRight {
+  0% {
+    left: 69%;
+  }
+  50% {
+    left: 70%;
+  }
+  100% {
+    left: 69%;
+  }
+}
