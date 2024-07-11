@@ -7,17 +7,10 @@ import Navbar from "./components/Navbar.jsx"; // Make sure the path is correct
 function App() {
   return (
     <>
-      <Navbar />
-      <header>
-        <link
-          href="https://fonts.googleapis.com/css?family=Press+Start+2P"
-          rel="stylesheet"
-        />
-        <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
-      </header>
-      <body>
+      <div>
+        <Navbar />
         <Home />
-      </body>
+      </div>
     </>
   );
 }
