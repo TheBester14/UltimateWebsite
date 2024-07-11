@@ -21,18 +21,10 @@ function Home() {
 
   return (
     <>
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css?family=Press+Start+2P"
-          rel="stylesheet"
-        />
-        <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
-        <link href="./Home.css" rel="stylesheet" />
-      </head>
       <body>
         <div className="arcade-container">
           <img
-            src="https://cdn.discordapp.com/attachments/1252422429222113280/1260025905292509356/whipin.png?ex=668dd211&is=668c8091&hm=cbf67206edbc7751a8d2ab4723df5a83b6e89b6276c7cfa6e41d682e865bff39&"
+            src="https://media.discordapp.net/attachments/1252422429222113280/1260777613090357248/whipin.png?ex=66908e27&is=668f3ca7&hm=d8c07918f63f83a4b414fa923e12259180e3487ecc7bee1e0bee23f698160f2e&=&format=webp&quality=lossless&width=1202&height=676"
             className="arcade-img"
             alt=""
           />
