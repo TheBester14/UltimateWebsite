@@ -1,3 +1,4 @@
+import { Outlet, Link } from "react-router-dom";
 const Navbar = () => {
   return (
     <header>
@@ -66,14 +67,13 @@ const Navbar = () => {
           >
             <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0 font-arcadeFont">
               <li>
-                <a
-                  //Tout les href sont des placeholder pour le moment, il faudra les remplacer par les bons liens quand les autres pages seront fini
-                  href="https://www.google.ca/?hl=fr"
+                <Link
+                  to="/"
                   class="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                   aria-current="page"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -94,18 +94,20 @@ const Navbar = () => {
                 </a>
               </li>
               <li>
-                <a
-                  href="https://www.google.ca/?hl=fr"
+                <Link
+                  to="/about"
                   class="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white"
                   aria-current="page"
                 >
                   About Us
-                </a>
+                </Link>
+                <Outlet />
               </li>
             </ul>
           </div>
         </div>
       </nav>
+      <Outlet />
     </header>
   );
 };

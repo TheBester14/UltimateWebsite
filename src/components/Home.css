@@ -94,11 +94,12 @@
 .slideshow-container {
   position: absolute;
   width: 100%;
-  max-width: 800px;
+  max-width: 500px;
   margin: auto;
   overflow: hidden;
-  top: 27%;
-  left: 28%;
+  top: 35%;
+  left: 20%;
+  right: 200px;
 }
 
 .slides {
@@ -109,4 +110,12 @@
 .slide {
   min-width: 100%;
   box-sizing: border-box;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+  top: 70%;
+  margin-left: 40px;
 }

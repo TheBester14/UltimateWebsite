@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import "./Home.css";
 
 const images = [
-  "http://www.bhmpics.com/wallpapers/little_pony_art-800x480.jpg",
-  "https://preview.ibb.co/e5OShF/cropped_800_480_111290.jpg",
+  "https://cdn.discordapp.com/attachments/1252422429222113280/1260766818432450570/New_Piskel_4.png?ex=66908419&is=668f3299&hm=e593a62866abce49d378edbbb63f8df31a7e99208927aa5ad55a539d9ba5c307&",
+  "https://cdn.discordapp.com/attachments/1252422429222113280/1260801561580539904/New_Piskel_9.png?ex=6690a474&is=668f52f4&hm=b0f3ed18aaec58fea4f6add1e1427fa66f40ab888e28888435061f61b8da690e&",
 ];
+
+const name = ["Tetris", "Chess"];
 
 function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -36,6 +38,7 @@ function Home() {
               {images.map((image, index) => (
                 <div className="slide" key={index}>
                   <img src={image} alt={`slide-${index}`} />
+                  <h1 class="title">{name[index]}</h1>
                 </div>
               ))}
             </div>
