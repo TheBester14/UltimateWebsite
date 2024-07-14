@@ -19,10 +19,10 @@ const Navbar = () => {
     navigate("/");
   };
   return (
-    <header>
+    <header className="fixed w-full z-50">
       <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          <div class="flex items-center">
+          <di class="flex items-center">
             <img
               src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ce1a7276-ef29-4188-8b5e-e50c6151ee00/dhba76l-54755332-4780-4e9a-b109-84b286c46cb0.png/v1/fill/w_400,h_527/luffy__mini___pretimeskip___original__by_monkeyoflife_dhba76l-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTI3IiwicGF0aCI6IlwvZlwvY2UxYTcyNzYtZWYyOS00MTg4LThiNWUtZTUwYzYxNTFlZTAwXC9kaGJhNzZsLTU0NzU1MzMyLTQ3ODAtNGU5YS1iMTA5LTg0YjI4NmM0NmNiMC5wbmciLCJ3aWR0aCI6Ijw9NDAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.P1dDck29VCwGO0tFG2jkkq2Kf46YARnZ9xn8b3Hnm_w"
               class="mr-3 h-6 sm:h-9"
@@ -31,7 +31,7 @@ const Navbar = () => {
             <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               UltimateWebsite
             </span>
-          </div>
+          </di>
           <div class="flex items-center lg:order-2">
             {isLoggedIn ? (
               <button

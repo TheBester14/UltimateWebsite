@@ -16,9 +16,9 @@ const About = () => {
             className="object-scale-down sm:h-36 sm:w-36 rotate-90"
             animate={{ rotateY: [0, 360, 0] }}
             transition={{
-              duration: 2, // Durée de la rotation en secondes
-              repeat: Infinity, // Répète l'animation à l'infini
-              ease: "linear", // Animation linéaire
+              duration: 2, // Duration of rotation in seconds
+              repeat: Infinity, // Repeat animation infinitely
+              ease: "linear", // Linear animation
             }}
           />
           <motion.img
@@ -26,9 +26,9 @@ const About = () => {
             className="object-scale-down sm:h-36 sm:w-36 rotate-90"
             animate={{ rotateY: [0, 360, 0] }}
             transition={{
-              duration: 2, // Durée de la rotation en secondes
-              repeat: Infinity, // Répète l'animation à l'infini
-              ease: "linear", // Animation linéaire
+              duration: 2, // Duration of rotation in seconds
+              repeat: Infinity, // Repeat animation infinitely
+              ease: "linear", // Linear animation
             }}
           />
           <motion.img
@@ -36,9 +36,9 @@ const About = () => {
             className="object-scale-down sm:h-36 sm:w-36 rotate-90"
             animate={{ rotateY: [0, 360, 0] }}
             transition={{
-              duration: 2, // Durée de la rotation en secondes
-              repeat: Infinity, // Répète l'animation à l'infini
-              ease: "linear", // Animation linéaire
+              duration: 2, // Duration of rotation in seconds
+              repeat: Infinity, // Repeat animation infinitely
+              ease: "linear", // Linear animation
             }}
           />
         </div>
