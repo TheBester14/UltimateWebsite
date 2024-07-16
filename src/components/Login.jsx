@@ -3,23 +3,24 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  //  const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/login", {
-        email,
+        emailOrUsername,
         password,
       });
       setMessage(response.data.message);
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", emailOrUsername); // Store the username
 
-      // Refresh page to see navbar Logout
-      window.location.reload();
+      // Refresh page and redirect to home on Login
+      window.location.reload(navigate("/"));
     } catch (error) {
       setMessage("Error: " + error.response.data.message);
     }
@@ -36,9 +37,9 @@ const Login = () => {
           <input
             type="text"
             className="w-full px-6 py-3 mb-2 border border-slate-600 rounded-lg font-medium"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email/Username"
+            value={emailOrUsername}
+            onChange={(e) => setEmailOrUsername(e.target.value)}
           />
           <input
             type="password"

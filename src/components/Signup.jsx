@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useScroll } from "framer-motion";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -17,6 +17,7 @@ const Signup = () => {
     try {
       const response = await axios.post("http://localhost:5000/signup", {
         email,
+        username, // Ensure username is being sent
         password,
       });
       setMessage(response.data.message);
@@ -25,6 +26,7 @@ const Signup = () => {
       setMessage("Error: Could Not Register");
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center mx-auto">
       <div className="max-w-[280px] w-full flex flex-col items-center justify-center text-center">
@@ -39,6 +41,13 @@ const Signup = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="text"
+            className="w-full px-6 py-3 mb-2 border border-slate-600 rounded-lg font-medium"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
             type="password"

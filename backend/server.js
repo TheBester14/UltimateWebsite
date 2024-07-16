@@ -52,7 +52,7 @@ app.get("/users", authenticateToken, async (req, res) => {
     const users = await client
       .db("signup")
       .collection("users")
-      .find({}, { projection: { email: 1 } })
+      .find({}, { projection: { email: 1, username: 1 } })
       .toArray();
     res.json(users);
   } catch (err) {
@@ -62,13 +62,13 @@ app.get("/users", authenticateToken, async (req, res) => {
 
 // Route to register a new user
 app.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, username, password } = req.body;
   try {
     const hash = await bcrypt.hash(password, 10);
     await client
       .db("signup")
       .collection("users")
-      .insertOne({ email, password: hash });
+      .insertOne({ email, username, password: hash });
     res.send({ message: "User registered" });
   } catch (err) {
     res.status(500).send(err);
@@ -77,24 +77,38 @@ app.post("/signup", async (req, res) => {
 
 // Route to login
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  console.log("Login route hit"); // Debugging
+  const { emailOrUsername, password } = req.body;
   try {
+    console.log("Searching for user"); // Debugging
     const user = await client
       .db("signup")
       .collection("users")
-      .findOne({ email });
+      .findOne({
+        $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+      });
     if (!user) {
+      console.log("User not found"); // Debugging
       return res.status(400).send({ message: "User not found" });
     }
+    console.log("User found, checking password"); // Debugging
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("Invalid credentials"); // Debugging
       return res.status(400).send({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ id: user._id }, "secret_key", {
-      expiresIn: "1h",
-    });
+    console.log("Password matched, generating token"); // Debugging
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      "secret_key",
+      {
+        expiresIn: "1h",
+      }
+    );
+    console.log("Generated token:", token);
     res.send({ message: "Login successful", token });
   } catch (err) {
+    console.error("Error during login:", err);
     res.status(500).send(err);
   }
 });

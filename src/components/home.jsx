@@ -1,17 +1,38 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import heartImg from "./heartImg.png";
 import { motion } from "framer-motion";
-import Loader from "./Loader.jsx"; // Assurez-vous que le chemin est correct
+import { jwtDecode } from "jwt-decode"; // Correct import
+import Loader from "./Loader.jsx"; // Ensure the path is correct
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    // Simule un chargement de données
+    // Simulate data loading
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Remplacez par la logique de chargement réelle
+    }, 2000); // Replace with real loading logic
+
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    console.log("Token from localStorage:", token); // Debugging
+
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log("Decoded token:", decodedToken); // Debugging
+        if (decodedToken.username) {
+          setUsername(decodedToken.username);
+          setIsLoggedIn(true);
+        } else {
+          console.error("Username not found in token");
+        }
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+      }
+    }
 
     return () => clearTimeout(timer);
   }, []);
@@ -52,17 +73,25 @@ const Home = () => {
             transition={{ repeat: Infinity, duration: 1 }}
           />
         </div>
-        <h1 className="mb-12 dark:text-white text-center w-screen lg:text-white">
-          Welcome to UltimateWebsite
-        </h1>
-        <div className="text-2xl flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-8">
-          <button type="button" className="nes-btn is-success">
-            Sign Up
-          </button>
-          <button type="button" className="nes-btn is-primary">
-            Log in
-          </button>
-        </div>
+        {isLoggedIn ? (
+          <h1 className="mb-12 dark:text-white text-center w-screen lg:text-white">
+            Welcome, {username}!
+          </h1>
+        ) : (
+          <>
+            <h1 className="mb-12 dark:text-white text-center w-screen lg:text-white">
+              Welcome to UltimateWebsite
+            </h1>
+            <div className="text-2xl flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-8">
+              <button type="button" className="nes-btn is-success">
+                Sign Up
+              </button>
+              <button type="button" className="nes-btn is-primary">
+                Log in
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
