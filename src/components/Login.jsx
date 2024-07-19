@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { TimeSpentContext } from "./TimeSpentContext";
 
 const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setTimeSpent } = useContext(TimeSpentContext);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTimeSpent((prevTime) => prevTime + 1);
+    }, 60000); // Increment time spent every minute
+
+    return () => clearInterval(intervalId); // Clear interval on component unmount
+  }, [setTimeSpent]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,7 +27,6 @@ const Login = () => {
       });
       setMessage(response.data.message);
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("username", emailOrUsername); // Store the username
 
       // Refresh page and redirect to home on Login
       window.location.reload(navigate("/"));

@@ -3,6 +3,7 @@ import heartImg from "./heartImg.png";
 import { motion } from "framer-motion";
 import { jwtDecode } from "jwt-decode"; // Correct import
 import Loader from "./Loader.jsx"; // Ensure the path is correct
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -83,12 +84,12 @@ const Home = () => {
               Welcome to UltimateWebsite
             </h1>
             <div className="text-2xl flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-8">
-              <button type="button" className="nes-btn is-success">
+              <Link to="/sign-up" className="nes-btn is-success">
                 Sign Up
-              </button>
-              <button type="button" className="nes-btn is-primary">
+              </Link>
+              <Link to="/login" className="nes-btn is-primary">
                 Log in
-              </button>
+              </Link>
             </div>
           </>
         )}

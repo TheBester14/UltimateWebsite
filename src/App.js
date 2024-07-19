@@ -7,20 +7,23 @@ import Games from "./components/Games";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
+import { TimeSpentProvider } from "./components/TimeSpentContext";
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/games" element={<Games />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sign-up" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="profile" element={<Profile />} />
-      </Routes>
-    </Router>
+    <TimeSpentProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/sign-up" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="profile" element={<Profile />} />
+        </Routes>
+      </Router>
+    </TimeSpentProvider>
   );
 }
 

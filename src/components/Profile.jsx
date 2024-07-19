@@ -1,19 +1,18 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import Gameboy from "./Gameboy";
-import { jwtDecode } from "jwt-decode";
+import { TimeSpentContext } from "./TimeSpentContext";
 
 const Profile = () => {
   const [users, setUsers] = useState([]);
   const [profilePic, setProfilePic] = useState("default-profile.jpg"); // default profile picture
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState(null);
+  const { timeSpent, username: contextUsername } = useContext(TimeSpentContext);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getUsers")
+      .get("http://localhost:5000/users")
       .then((response) => {
         console.log("Fetched users:", response.data); // Log the fetched data
         setUsers(response.data);
@@ -60,21 +59,6 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    // Verify if user is logged in
-    const token = localStorage.getItem("token");
-    console.log("Is there a token: ", token);
-
-    if (token) {
-      const decodedToken = jwtDecode(token);
-      console.log("Token information: ", decodedToken);
-      setUsername(decodedToken.username);
-      setIsLoggedIn(true);
-    } else {
-      console.log("Error decoding the token");
-    }
-  }, []);
-  const today = new Date();
   return (
     <div className="relative min-h-screen">
       <img
@@ -87,19 +71,15 @@ const Profile = () => {
         <h1 className="mb-12 dark:text-white lg:text-white text-center w-screen text-4xl mt-7 ">
           Here comes a new <Gameboy text="challenger!" />
         </h1>
-        <div className="contains-all-object flex flex-row-reverse gap-x-48 w-fit ">
-          <div className="flex flex-col items-center border-black-300 p-16 ">
-            <div className="container w-full text-center ">
-              {users.map((user) => (
-                <div key={user._id}>{user.email}</div>
-              ))}
-              <b className="text-xl text-white">
-                Username: {username}
-                <br /> Hours on the site: {today.getFullYear()}
-                <br /> Game Score :
-                <br /> Game most played:
-              </b>
-            </div>
+        <div className="contains-all-object flex flex-col md:flex-row  w-7/12  items-center justify-center ">
+          <div className="flex flex-col items-center border-black-300  md:p-12 ">
+            <b className="text-xl text-white w-max">
+              Username: {contextUsername}
+              <br /> Hours on the site:
+              {Math.floor(timeSpent / 60)} h {timeSpent % 60} min
+              <br /> Game Score :
+              <br /> Game most played:
+            </b>
           </div>
 
           <div className="profile-container flex flex-col items-center mt-16">
@@ -107,7 +87,7 @@ const Profile = () => {
               id="profilePic "
               src="https://via.placeholder.com/150"
               alt="Profile"
-              className="profile-pic h-30 w-30"
+              className="profile-pic h-25 w-25"
             />
             <form onSubmit={handleSubmit} className="">
               <label htmlFor="fileInput" className="custom-file-upload"></label>

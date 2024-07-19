@@ -39,7 +39,7 @@ const authenticateToken = (req, res, next) => {
   const token = req.headers["authorization"];
   if (!token) return res.sendStatus(403);
 
-  jwt.verify(token, "secret_key", (err, user) => {
+  jwt.verify(token.split(" ")[1], "secret_key", (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
     next();
@@ -52,7 +52,7 @@ app.get("/users", authenticateToken, async (req, res) => {
     const users = await client
       .db("signup")
       .collection("users")
-      .find({}, { projection: { email: 1, username: 1 } })
+      .find({}, { projection: { email: 1, username: 1, timeSpent: 1 } })
       .toArray();
     res.json(users);
   } catch (err) {
@@ -68,7 +68,7 @@ app.post("/signup", async (req, res) => {
     await client
       .db("signup")
       .collection("users")
-      .insertOne({ email, username, password: hash });
+      .insertOne({ email, username, password: hash, timeSpent: 0 });
     res.send({ message: "User registered" });
   } catch (err) {
     res.status(500).send(err);
@@ -110,6 +110,51 @@ app.post("/login", async (req, res) => {
   } catch (err) {
     console.error("Error during login:", err);
     res.status(500).send(err);
+  }
+});
+
+// Route to update time spent
+app.post("/track-time", authenticateToken, async (req, res) => {
+  const { timeSpent } = req.body;
+  const userId = new ObjectId(req.user.id);
+
+  try {
+    const result = await client
+      .db("signup")
+      .collection("users")
+      .updateOne({ _id: userId }, { $inc: { timeSpent: timeSpent } });
+
+    if (result.modifiedCount === 1) {
+      console.log(`Tracking time for user ${userId}: ${timeSpent} minutes`); // Debugging
+      res.json({ success: true, message: "Time tracked successfully" });
+    } else {
+      res.status(404).send({ success: false, message: "User not found" });
+    }
+  } catch (err) {
+    console.error("Error tracking time:", err);
+    res.status(500).send({ success: false, error: "Internal Server Error" });
+  }
+});
+
+// Route to get time spent
+app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
+  const userId = new ObjectId(req.params.id);
+  console.log(`Fetching time spent for user ID: ${userId}`); // Debugging
+
+  try {
+    const user = await client
+      .db("signup")
+      .collection("users")
+      .findOne({ _id: userId }, { projection: { timeSpent: 1 } });
+
+    if (user) {
+      res.json({ totalTimeSpent: user.timeSpent || 0 });
+    } else {
+      res.status(404).send({ success: false, message: "User not found" });
+    }
+  } catch (err) {
+    console.error("Error fetching time spent:", err);
+    res.status(500).send({ success: false, error: "Internal Server Error" });
   }
 });
 
