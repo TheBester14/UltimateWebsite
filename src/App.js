@@ -9,6 +9,8 @@ import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Chess from "./ChessGame/Chess";
 import Tetris from "./Tetris/tetris.jsx";
+import JeuUnity from "./JeuUnity/JeuUnity.jsx";
+
 import { TimeSpentProvider } from "./components/TimeSpentContext";
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/chess" element={<Chess />} />
           <Route path="/tetris" element={<Tetris />} />
+          <Route path="/jeuUnity" element={<JeuUnity />} />
         </Routes>
       </Router>
     </TimeSpentProvider>
