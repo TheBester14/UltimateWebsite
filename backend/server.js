@@ -125,8 +125,8 @@ app.post("/track-time", authenticateToken, async (req, res) => {
       .updateOne({ _id: userId }, { $inc: { timeSpent: timeSpent } });
 
     if (result.modifiedCount === 1) {
-      console.log(`Tracking time for user ${userId}: ${timeSpent} minutes`); // Debugging
-      res.json({ success: true, message: "Time tracked successfully" });
+      //  console.log(`Tracking time for user ${userId}: ${timeSpent} minutes`); // Debugging
+      //  res.json({ success: true, message: "Time tracked successfully" });
     } else {
       res.status(404).send({ success: false, message: "User not found" });
     }
@@ -139,7 +139,7 @@ app.post("/track-time", authenticateToken, async (req, res) => {
 // Route to get time spent
 app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
   const userId = new ObjectId(req.params.id);
-  console.log(`Fetching time spent for user ID: ${userId}`); // Debugging
+  // console.log(`Fetching time spent for user ID: ${userId}`); // Debugging
 
   try {
     const user = await client

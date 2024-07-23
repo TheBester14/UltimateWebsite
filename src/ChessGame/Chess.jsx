@@ -1,9 +1,12 @@
 import React from "react";
+import Chessboard from "./Chessboard/Chessboard";
+import "./Chess.css";
 
 const Chess = () => {
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <h1 className="text-center w-full text-4xl">Chess</h1>
+    //<div id="chess" className="min-h-screen flex justify-center items-center">
+    <div id="app">
+      <Chessboard />
     </div>
   );
 };
