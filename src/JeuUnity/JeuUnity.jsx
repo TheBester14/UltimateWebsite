@@ -5,9 +5,9 @@ const JeuUnity = () => {
     //<div id="chess" className="min-h-screen flex justify-center items-center">
     <div id="app">
       <iframe
-        width="970px"
-        height="700px"
-        src="https://yloom.github.io/TestWebGl/"
+        width="1070px"
+        height="800px"
+        src="https://yloom.github.io/TestUnityFinale/"
       ></iframe>
     </div>
   );
