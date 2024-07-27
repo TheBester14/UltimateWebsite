@@ -8,7 +8,7 @@ import Signup from "./components/Signup";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
 import Chess from "./ChessGame/Chess";
-import Tetris from "./Tetris/tetris.jsx";
+import Tetris from "./Tetris/src/components/tetris.jsx";
 import JeuUnity from "./JeuUnity/JeuUnity.jsx";
 
 import { TimeSpentProvider } from "./components/TimeSpentContext";

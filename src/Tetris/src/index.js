@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Tetris from "./tetris";
+import "./index.css";
+import Tetris from "./components/Tetris";
 
 ReactDOM.render(
   <React.StrictMode>
