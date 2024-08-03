@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { jwtDecode } from "jwt-decode"; // Correct import
 import Loader from "./Loader.jsx"; // Ensure the path is correct
 import { Link } from "react-router-dom";
+import menubackground from "./menubackground.png";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -44,11 +45,7 @@ const Home = () => {
 
   return (
     <div className="relative min-h-screen">
-      <img
-        src="https://media.discordapp.net/attachments/1252422429222113280/1260777613090357248/whipin.png?ex=66908e27&is=668f3ca7&hm=d8c07918f63f83a4b414fa923e12259180e3487ecc7bee1e0bee23f698160f2e&=&format=webp&quality=lossless&width=1202&height=676"
-        className="arcade-img w-full h-auto"
-        alt=""
-      />
+      <img src={menubackground} className="arcade-img w-full h-auto" alt="" />
 
       <div className="bg-1000 text-5xl flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div className="flex space-x-2">

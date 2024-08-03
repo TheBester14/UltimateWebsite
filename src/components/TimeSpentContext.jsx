@@ -16,7 +16,7 @@ export const TimeSpentProvider = ({ children }) => {
 
       // Initialize time spent from backend
       const fetchTimeSpentUrl = `http://localhost:5000/get-time-spent/${decodedToken.id}`;
-      console.log(`Fetching time spent from URL: ${fetchTimeSpentUrl}`); // Debugging
+      //  console.log(`Fetching time spent from URL: ${fetchTimeSpentUrl}`); // Debugging
 
       fetch(fetchTimeSpentUrl, {
         headers: {
@@ -30,9 +30,10 @@ export const TimeSpentProvider = ({ children }) => {
           return response.json();
         })
         .then((data) => {
-          console.log(
-            `Fetched time spent for user ${decodedToken.id}: ${data.totalTimeSpent} minutes`
-          ); // Debugging
+          console
+            .log
+            //    `Fetched time spent for user ${decodedToken.id}: ${data.totalTimeSpent} minutes`
+            (); // Debugging
           setTimeSpent(data.totalTimeSpent || 0);
         })
         .catch((error) => console.error("Error fetching time spent:", error));
@@ -41,10 +42,10 @@ export const TimeSpentProvider = ({ children }) => {
       const intervalId = setInterval(() => {
         setTimeSpent((prevTime) => {
           const updatedTime = prevTime + 1;
-          console.log(`Updating time spent: ${updatedTime}`); // Debugging
+          // console.log(`Updating time spent: ${updatedTime}`); // Debugging
 
           const trackTimeUrl = "http://localhost:5000/track-time";
-          console.log(`Tracking time at URL: ${trackTimeUrl}`); // Debugging
+          // console.log(`Tracking time at URL: ${trackTimeUrl}`); // Debugging
 
           fetch(trackTimeUrl, {
             method: "POST",
@@ -58,12 +59,12 @@ export const TimeSpentProvider = ({ children }) => {
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                //     throw new Error(`HTTP error! status: ${response.status}`);
               }
               return response.json();
             })
             .then((data) => {
-              console.log("Time tracked successfully:", data.message); // Debugging
+              //    console.log("Time tracked successfully:", data.message); // Debugging
             })
             .catch((error) => console.error("Error tracking time:", error));
           return updatedTime;

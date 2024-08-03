@@ -187,14 +187,13 @@ export const getAllPossibleKingMoves = (fromRow, fromCol, board) => {
   return possibleMoves;
 };
 
-export const isKingInCheck = (player, board) => {
-  // Find king's position
-  const kingPosition = Object.keys(board).find(
-    (key) => board[key] === `${player}king`
-  );
+export const isKingInCheck = (player, board, kingPosition) => {
+  if (!kingPosition) {
+    console.error(`King position for ${player} is undefined`);
+    return false;
+  }
   console.log(`King position for ${player}:`, kingPosition);
 
-  // Check if any opponent piece can move to the king's position
   const opponentColor = player === "white" ? "black" : "white";
   return Object.keys(board).some((key) => {
     const piece = board[key];
@@ -220,7 +219,7 @@ export const isKingInCheck = (player, board) => {
 
       if (possibleMoves.includes(kingPosition)) {
         console.log(
-          `${piece} at ${key} can move to the king at ${kingPosition}`
+          `${piece} at ${key} can move to the king at ${kingPosition}, KING IN CHECK`
         );
         return true;
       }
@@ -231,26 +230,112 @@ export const isKingInCheck = (player, board) => {
 };
 
 export const isCheckMate = (player, board) => {
-  // Check if the king is currently in check
-  if (!isKingInCheck(player, board)) return false;
+  const opponent = player === "white" ? "black" : "white";
 
-  // Get all pieces of the current player
+  // Obtain the King's position
+  let kingPosition = Object.keys(board).find(
+    (key) => board[key] === `${player}king`
+  );
+
+  // Error check
+  if (!kingPosition) {
+    console.error(`King position for ${player} is undefined`);
+    return false;
+  }
+
+  console.log(
+    "Inside checkmate function looking for king position ",
+    kingPosition
+  );
+
+  const fromRow = parseInt(kingPosition[0], 10);
+  const fromCol = parseInt(kingPosition[1], 10);
+
+  // Get all of the options where the current king can move
+  let currentKingPossibleMoves = getAllPossibleKingMoves(
+    fromRow,
+    fromCol,
+    board
+  );
+
+  console.log(
+    `These are the current positions available to the king before any verification: ${currentKingPossibleMoves}`
+  );
+
+  //console.log(`The board: ${JSON.stringify(board)}`);
+
+  // Filter out invalid king moves
+  const validKingMoves = currentKingPossibleMoves.filter((move) => {
+    // Check if the move lands on a square occupied by the same color piece
+    if (board[move] && board[move].includes(player)) {
+      console.log(
+        `Move to ${move} is invalid because it is occupied by the same color piece.`
+      );
+      return false;
+    }
+
+    // Create a temporary board state to test if the move leaves the king in check
+    const tempBoard = {
+      ...board,
+      [kingPosition]: null,
+      [move]: `${player}king`,
+    };
+
+    // console.log(
+    //   `Testing move: ${move}, Temporary board state: ${JSON.stringify(
+    //     tempBoard
+    //   )}`
+    // );
+
+    const isMoveValid = !isKingInCheck(player, tempBoard, move);
+    console.log(`Move to ${move} is ${isMoveValid ? "valid" : "invalid"}`);
+    return isMoveValid;
+  });
+
+  console.log(`Valid king moves after verification: ${validKingMoves}`);
+
+  // If the king has valid moves, it's not checkmate
+  if (validKingMoves.length > 0) {
+    return false;
+  }
+
+  // Check if any piece can capture the threatening piece or block the threat
   const playerPieces = Object.keys(board).filter(
     (key) => board[key] && board[key].includes(player)
   );
 
-  // Check if any piece has a valid move that would get the king out of check
   for (let fromPosition of playerPieces) {
     const piece = board[fromPosition];
-    for (let toPosition of Object.keys(board)) {
-      const tempBoard = { ...board, [fromPosition]: null, [toPosition]: piece };
-      if (isMoveValid(piece, fromPosition, toPosition, board)) {
-        if (!isKingInCheck(player, tempBoard)) {
-          return false;
-        }
+    const fromRow = parseInt(fromPosition[0], 10);
+    const fromCol = parseInt(fromPosition[1], 10);
+    let possibleMoves = [];
+
+    if (piece.includes("queen")) {
+      possibleMoves = getAllPossibleQueenMoves(fromRow, fromCol, board);
+    } else if (piece.includes("rook")) {
+      possibleMoves = getAllPossibleRookMoves(fromRow, fromCol, board);
+    } else if (piece.includes("bishop")) {
+      possibleMoves = getAllPossibleBishopMoves(fromRow, fromCol, board);
+    } else if (piece.includes("knight")) {
+      possibleMoves = getAllPossibleKnightMoves(fromRow, fromCol, board);
+    } else if (piece.includes("pawn")) {
+      possibleMoves = getPossiblePawnMoves(fromRow, fromCol, piece, board);
+    }
+
+    for (let move of possibleMoves) {
+      const tempBoard = { ...board, [fromPosition]: null, [move]: piece };
+
+      if (!isKingInCheck(player, tempBoard, kingPosition)) {
+        return false; // There is a move that can capture or block the threat
       }
     }
   }
 
-  return true; // The player is in checkmate if no valid moves resolve the check
+  // If no valid king moves and no way to capture/block the threat, it's checkmate
+  if (isKingInCheck(player, board, kingPosition)) {
+    console.log(`${player} king is in checkmate`);
+    return true;
+  }
+
+  return false;
 };

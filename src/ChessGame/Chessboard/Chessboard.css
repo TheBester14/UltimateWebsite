@@ -107,17 +107,53 @@
 }
 
 .reset-button {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 10px 20px;
-  cursor: pointer;
+  background-color: #4caf50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
   font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .reset-button:hover {
-  background-color: #e0e0e0;
+  background-color: #45a049;
+  transform: scale(1.05);
 }
 
+.reset-button:active {
+  background-color: #3e8e41;
+  transform: scale(0.95);
+}
+.back-button {
+  background-color: #c41e3a; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.back-button:hover {
+  background-color: #c41e3a;
+  transform: scale(1.05);
+}
+
+.back-button:active {
+  background-color: #3e8e41;
+  transform: scale(0.95);
+}
 .circle {
   content: " ";
   width: 24px;

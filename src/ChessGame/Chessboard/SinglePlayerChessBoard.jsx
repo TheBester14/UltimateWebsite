@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Chessboard.css";
+import "./SinglePlayer.css";
 import initialBoardSetup from "./initialBoardSetup";
 import ChessPiece from "./ChessPiece";
 import { isMoveValid, isValidCastlingMove } from "./movementRules";
@@ -13,8 +13,11 @@ import {
   getPossiblePawnMoves,
   getAllPossibleKingMoves,
 } from "./gamestate";
+import { makeAIMove } from "./AI_Player/minimax";
+import moveSound from "./movesound.mp3";
+let moveAudio = new Audio(moveSound);
 
-const Chessboard = () => {
+const SinglePlayerChessboard = ({ setGameMode }) => {
   const [board, setBoard] = useState(initialBoardSetup);
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -34,15 +37,11 @@ const Chessboard = () => {
   const handleTileClick = (position) => {
     try {
       console.log("Clicked position:", position);
-      console.log("Selected piece:", selectedPiece);
-
+      if (checkMate) {
+        return; // Should no be able to play when there is checkmate
+      }
       if (selectedPiece) {
-        if (
-          board[position] &&
-          board[position].includes(
-            board[selectedPiece].includes("white") ? "white" : "black"
-          )
-        ) {
+        if (board[position] && board[position].includes(currentPlayer)) {
           console.log("Switching selected piece to:", board[position]);
           setSelectedPiece(position);
           updatePossibleMoves(position);
@@ -67,40 +66,51 @@ const Chessboard = () => {
           const fromCol = parseInt(selectedPiece[1], 10);
           const toCol = parseInt(position[1], 10);
 
-          // Castling move
           if (
-            Math.abs(toCol - fromCol) === 2 &&
-            board[selectedPiece].includes("king")
+            board[selectedPiece].includes("king") &&
+            Math.abs(toCol - fromCol) === 2
           ) {
             const rookFromCol = toCol > fromCol ? 7 : 0;
             const rookToCol = toCol > fromCol ? toCol - 1 : toCol + 1;
-            const rookPosition = `${fromRow}${rookFromCol}`;
-            const rookNewPosition = `${fromRow}${rookToCol}`;
-            newBoard[rookNewPosition] = newBoard[rookPosition];
-            newBoard[rookPosition] = null;
+            newBoard[fromRow + "" + rookFromCol] = null;
+            newBoard[fromRow + "" + rookToCol] = currentPlayer + "rook";
+            setHasMoved((prevState) => ({
+              ...prevState,
+              [`${currentPlayer}King`]: true,
+              [`${currentPlayer}Rook${
+                toCol > fromCol ? "Right" : "Left"
+              }`]: true,
+            }));
           }
-          // En passant
+
+          if (
+            board[selectedPiece].includes("pawn") &&
+            (toRow === 0 || toRow === 7)
+          ) {
+            console.log("PAWN IS PROMOTED");
+            newBoard[position] = currentPlayer + "queen";
+          }
+
+          let kingPosition = Object.keys(board).find(
+            (key) => board[key] === `${currentPlayer}king`
+          );
+
+          if (board[selectedPiece].includes("king")) {
+            kingPosition = position;
+          }
+
           if (
             board[selectedPiece].includes("pawn") &&
             enPassant &&
             position === enPassant
           ) {
-            newBoard[`${fromRow}${toCol}`] = null; // remove the captured pawn
+            newBoard[`${fromRow}${toCol}`] = null;
           }
-
-          // Promotion to queen
-          if (board[selectedPiece] === "whitepawn" && toRow === 7) {
-            newBoard[position] = "whitequeen";
-          } else if (board[selectedPiece] === "blackpawn" && toRow === 0) {
-            newBoard[position] = "blackqueen";
-          }
-          // Update en Passant state
 
           if (
             board[selectedPiece].includes("pawn") &&
             Math.abs(toRow - fromRow) === 2
           ) {
-            // Check if the pawn lands right next to an opponent's pawn
             const leftPosition = `${toRow}${toCol - 1}`;
             const rightPosition = `${toRow}${toCol + 1}`;
             if (
@@ -121,36 +131,69 @@ const Chessboard = () => {
             setEnPassant(null);
           }
 
-          // Update movement tracking
-          if (board[selectedPiece].includes("king")) {
-            setHasMoved((prev) => ({
-              ...prev,
-              [`${currentPlayer}King`]: true,
-            }));
-          } else if (board[selectedPiece].includes("rook")) {
-            const rookSide = fromCol === 0 ? "Left" : "Right";
-            setHasMoved((prev) => ({
-              ...prev,
-              [`${currentPlayer}Rook${rookSide}`]: true,
-            }));
-          }
-
-          if (isKingInCheck(currentPlayer, newBoard)) {
+          if (isKingInCheck(currentPlayer, newBoard, kingPosition, enPassant)) {
             console.log("Move is invalid, it leaves the king in check");
           } else {
             console.log("Move is valid");
             setBoard(newBoard);
             setPossibleMoves([]);
-            setSelectedPiece(null); // Deselect after a valid move
+            setSelectedPiece(null);
             const opponentColor = currentPlayer === "white" ? "black" : "white";
+
+            let opponentKingPosition = Object.keys(newBoard).find(
+              (key) => newBoard[key] === `${opponentColor}king`
+            );
+
             setCurrentPlayer(opponentColor);
 
-            if (isKingInCheck(opponentColor, newBoard)) {
+            setTimeout(() => {
+              const aiMove = makeAIMove(newBoard, 2); // Adjust depth as needed
+              if (checkMate !== true) {
+                if (aiMove) {
+                  console.log("AI move:", aiMove);
+                  setBoard(aiMove);
+                  setCurrentPlayer("white");
+                  moveAudio.play();
+
+                  let newInCheck = false;
+                  let newCheckMate = false;
+                  const aiKingPosition = Object.keys(aiMove).find(
+                    (key) => aiMove[key] === "blackking"
+                  );
+                  if (
+                    isKingInCheck("black", aiMove, aiKingPosition) &&
+                    isCheckMate("black", aiMove, enPassant)
+                  ) {
+                    newCheckMate = true;
+                    console.log("Black king is in checkmate!");
+                  } else if (isKingInCheck("black", aiMove, aiKingPosition)) {
+                    newInCheck = true;
+                    console.log("Black king is in check!");
+                  }
+
+                  setInCheck(newInCheck);
+                  setCheckMate(newCheckMate);
+                } else {
+                  console.log("No valid AI move found");
+                }
+              }
+            }, 1000);
+
+            if (
+              isKingInCheck(
+                opponentColor,
+                newBoard,
+                opponentKingPosition,
+                enPassant
+              )
+            ) {
               setInCheck(true);
               console.log(`${opponentColor} king is in check!`);
-              if (isCheckMate(opponentColor, newBoard)) {
+              if (isCheckMate(opponentColor, newBoard, enPassant)) {
                 setCheckMate(true);
                 console.log(`${opponentColor} king is in checkmate!`);
+              } else {
+                setCheckMate(false);
               }
             } else {
               setInCheck(false);
@@ -215,6 +258,20 @@ const Chessboard = () => {
         )
       ) {
         possibleMoves.push(fromRow + "" + (fromCol - 2));
+      }
+
+      // Remove moves that would put the king in check
+      for (let i = 0; i < possibleMoves.length; i++) {
+        const newBoard = {
+          ...board,
+          [position]: null,
+          [possibleMoves[i]]: piece,
+        };
+        const kingPosition = possibleMoves[i];
+        if (isKingInCheck(currentPlayer, newBoard, kingPosition)) {
+          possibleMoves.splice(i, 1);
+          i--;
+        }
       }
     } else if (piece.includes("pawn")) {
       possibleMoves = getPossiblePawnMoves(fromRow, fromCol, piece, board);
@@ -284,11 +341,18 @@ const Chessboard = () => {
     return tiles;
   };
 
+  const goBack = () => {
+    setGameMode(null);
+  };
+
   return (
     <div className="chessboard-container">
-      <div className="controls">
-        <button onClick={handleReset} className="reset-button">
+      <div className="controls flex flex-col">
+        <button onClick={handleReset} className="reset-button ">
           Reset Game
+        </button>
+        <button onClick={goBack} className="back-button">
+          Return
         </button>
       </div>
       <div id="chessboard" className="grid grid-cols-8 w-800 h-800 mt-20">
@@ -304,4 +368,4 @@ const Chessboard = () => {
   );
 };
 
-export default Chessboard;
+export default SinglePlayerChessboard;

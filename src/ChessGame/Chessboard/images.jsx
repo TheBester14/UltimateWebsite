@@ -17,13 +17,15 @@ const images = {
   blackknight,
   blackpawn,
   blackqueen,
-  blackrook,
+  blackrookright: blackrook,
+  blackrookleft: blackrook,
   whitebishop,
   whiteking,
   whiteknight,
   whitepawn,
   whitequeen,
-  whiterook,
+  whiterookleft: whiterook,
+  whiterookright: whiterook,
 };
 
 export default images;
