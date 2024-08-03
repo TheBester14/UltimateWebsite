@@ -112,7 +112,6 @@ const Tetris = () => {
             style={{
               width: "30px",
               height: "30px",
-              border: "1px solid black",
               backgroundImage: cell.value ? `url(${cell.cellFormat})` : null,
               backgroundSize: "cover",
             }}
