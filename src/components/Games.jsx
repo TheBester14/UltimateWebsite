@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import "./Games.css";
+import leftArrowIMG from "./leftArrowIMG.png";
+import rightArrowIMG from "./rightArrowIMG.png";
+import tetrisIMG from "./tetrisIMG.png";
+import ChessIMG from "./ChessIMG.png";
 
-const images = [
-  "https://cdn.discordapp.com/attachments/1252422429222113280/1260766818432450570/New_Piskel_4.png?ex=66908419&is=668f3299&hm=e593a62866abce49d378edbbb63f8df31a7e99208927aa5ad55a539d9ba5c307&",
-  "https://cdn.discordapp.com/attachments/1252422429222113280/1260801561580539904/New_Piskel_9.png?ex=6690a474&is=668f52f4&hm=b0f3ed18aaec58fea4f6add1e1427fa66f40ab888e28888435061f61b8da690e&",
-];
+const images = [tetrisIMG, ChessIMG];
 
 const name = ["Tetris", "Chess"];
 
@@ -45,18 +46,12 @@ function Home() {
           </div>
           <div className="Arrow" id="left" onClick={prevSlide}>
             <button>
-              <img
-                src="https://cdn.discordapp.com/attachments/452310504233500673/1260063337660809236/New_Piskel_3.png?ex=668df4ee&is=668ca36e&hm=4f072744afce5325ce18ca4bfe35e9eb5fca207ebd976cf0b8f7705dba42040d&"
-                alt="Left Arrow"
-              />
+              <img src={leftArrowIMG} alt="Left Arrow" />
             </button>
           </div>
           <div className="Arrow" id="right" onClick={nextSlide}>
             <button>
-              <img
-                src="https://cdn.discordapp.com/attachments/452310504233500673/1260061452564434954/New_Piskel_2.png?ex=668df32d&is=668ca1ad&hm=38a56d11a8a10a5f269cb9ca4c368b4c49e2356e061169c792824848104f6395&"
-                alt="Right Arrow"
-              />
+              <img src={rightArrowIMG} alt="Right Arrow" />
             </button>
           </div>
         </div>
