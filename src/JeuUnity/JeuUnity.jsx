@@ -7,7 +7,7 @@ const JeuUnity = () => {
       <iframe
         width="1070px"
         height="800px"
-        src="https://yloom.github.io/TestUnityFinale/"
+        src="https://yloom.github.io/Unity2D/"
       ></iframe>
     </div>
   );

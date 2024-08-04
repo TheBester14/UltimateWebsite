@@ -68,10 +68,14 @@ import rightArrowIMG from "./rightArrowIMG.png";
 import tetrisIMG from "./tetrisIMG.png";
 import ChessIMG from "./ChessIMG.png";
 import menubackground from "./menubackground.png";
-
-const images = [tetrisIMG, ChessIMG];
-const name = ["Tetris", "Chess"];
-const urls = ["http://localhost:3000/tetris", "http://localhost:3000/chess"];
+import SpaceInvIMG from "./SpaceInvIMG.png";
+const images = [tetrisIMG, ChessIMG, SpaceInvIMG];
+const name = ["Tetris", "Chess", "SpaceInvaders"];
+const urls = [
+  "http://localhost:3000/tetris",
+  "http://localhost:3000/chess",
+  "http://localhost:3000/jeuUnity",
+];
 
 function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
