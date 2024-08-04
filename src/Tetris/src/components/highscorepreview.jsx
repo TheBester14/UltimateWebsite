@@ -5,8 +5,7 @@ const HighScorePreview = ({ highScore }) => {
         style={{
           color: "black",
           textAlign: "center",
-          width: "200px",
-          marginTop: "-285px",
+          // marginTop: "-285px",
         }}
       >
         High Score: {highScore}

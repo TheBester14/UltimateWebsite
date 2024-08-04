@@ -237,7 +237,6 @@ const useTetrisGame = () => {
       if (
         row.slice(1, -1).every((cell) => cell.value !== 0) // Ignore first and last cells
       ) {
-        console.log("Row to clear: ", rowIndex);
         rowsToClear.push(rowIndex);
       }
     });

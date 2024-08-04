@@ -1,5 +1,4 @@
-import stage from "../asset/Tetris stage.png";
-export const createEmptyMatrix = (width = 12, height = 22) => {
+export const createEmptyMatrix = (width = 12, height = 18) => {
   return Array.from({ length: height }, (_, rowIndex) =>
     Array.from({ length: width }, (_, colIndex) => {
       return { value: 0, cellFormat: null, color: "0,0,0" }; // Regular cells

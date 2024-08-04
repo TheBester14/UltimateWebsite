@@ -1,16 +1,12 @@
-import React, {
-  useEffect,
-  useCallback,
-  useMemo,
-  useState,
-  useRef,
-} from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import GameBoard from "./GameBoard";
 import Menu from "./Menu";
 import useTetrisGame from "../hooks/useTetrisGame";
 import TetrominoPreview from "./TetrominoPreview";
 import HighScorePreview from "./highscorepreview";
 import AudioPlayer from "./AudioPlayer";
+import gameboyImage from "../asset/R.png";
+import "./tetris.css";
 
 const Tetris = () => {
   const {
@@ -32,6 +28,7 @@ const Tetris = () => {
   const [ghostPiecePosition, setGhostPiecePosition] = useState(
     previsualizeTetrominoAtBottom()
   );
+  const [isIndex, setIsIndex] = useState(false);
 
   const handleKeyDown = useCallback(
     (e) => {
@@ -80,6 +77,8 @@ const Tetris = () => {
   const renderGhostPiece = () => {
     const { shape } = activeTetrominoRef.current;
 
+    console.log(ghostPiecePosition.x, ghostPiecePosition.y);
+
     return shape.map((row, rowIndex) =>
       row.map((cell, colIndex) =>
         cell ? (
@@ -87,10 +86,12 @@ const Tetris = () => {
             key={`${rowIndex}-${colIndex}`}
             style={{
               position: "absolute",
-              top: `${(ghostPiecePosition.y + rowIndex) * 30}px`,
-              left: `${(ghostPiecePosition.x + colIndex) * 30}px`,
+              top: `${(ghostPiecePosition.y + rowIndex) * 30 + 22}px`,
+              left: `${(ghostPiecePosition.x + colIndex) * 30 + 250}px`,
               width: "30px",
               height: "30px",
+              border: "1px solid rgba(0, 0, 0, 0.8)", // Ajout d'une bordure pour une meilleure visibilité
+
               backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           ></div>
@@ -123,40 +124,60 @@ const Tetris = () => {
 
   return (
     <div
-      className="p-44 w-screen h-screen"
+      className="relative h-screen w-screen"
       style={{ backgroundColor: "#9bbc0f" }}
     >
-      {inMenu ? (
-        <Menu startGame={startGame} />
-      ) : gameOver ? (
-        <div style={{ textAlign: "center" }}>
-          <h1>Game Over</h1>
-          <button onClick={startGame}>Try Again</button>
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ zIndex: isIndex ? 0 : 2 }}
+      >
+        <img src={gameboyImage} className="gameboy h-full w-full" alt="" />
+      </div>
+
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ zIndex: 1 }}
+      >
+        <div className="text-3xl flex flex-col items-center">
+          {inMenu ? (
+            <Menu startGame={startGame} setIsIndex={setIsIndex} />
+          ) : gameOver ? (
+            <div style={{ textAlign: "center" }}>
+              <h1>Game Over</h1>
+              <button onClick={startGame}>Try Again</button>
+            </div>
+          ) : (
+            <div
+              className="tetris h-full"
+              style={{
+                display: "flex",
+                position: "relative",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "40px",
+                flexDirection: "row-reverse",
+              }}
+            >
+              <AudioPlayer score={currentScore} />
+              <div style={{ marginTop: "22px" }}>
+                <GameBoard matrixToRender={matrixToRender} />
+                {renderGhostPiece()}
+              </div>
+              <div style={{ position: "relative", alignItems: "center" }}>
+                <h1 style={{ fontSize: "2rem" }}>Next</h1>
+                <TetrominoPreview tetromino={nextTetromino} />
+                <h1 style={{ fontSize: "2rem", marginLeft: "-12%" }}>Saved</h1>
+                <TetrominoPreview tetromino={savedTetrominoRef.current} />
+                <br />
+                <h1>
+                  Score : <br />
+                  {currentScore}
+                </h1>
+              </div>
+            </div>
+          )}
         </div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "20px",
-            flexDirection: "row-reverse",
-          }}
-        >
-          <AudioPlayer score={currentScore} />
-          <div style={{ position: "relative" }}>
-            <GameBoard matrixToRender={matrixToRender} />
-            {renderGhostPiece()}
-          </div>
-          <div style={{ position: "relative" }}>
-            <h1 style={{ fontSize: "2rem", textAlign: "center" }}>Next</h1>
-            <TetrominoPreview tetromino={nextTetromino} />
-            <h1 style={{ fontSize: "2rem", textAlign: "center" }}>Saved</h1>
-            <TetrominoPreview tetromino={savedTetrominoRef.current} />
-          </div>
-          <HighScorePreview highScore={currentScore} />
-        </div>
-      )}
+      </div>
     </div>
   );
 };
