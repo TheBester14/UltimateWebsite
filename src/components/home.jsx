@@ -44,14 +44,14 @@ const Home = () => {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden ">
       <img
         src={menubackground}
-        className="arcade-img inset-0 w-full h-full object-cover"
-        alt=""
+        className="absolute bg-green-300 inset-0 w-full h-full object-cover "
+        alt="background"
       />
 
-      <div className="bg-1000 text-5xl flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-5xl text-white p-8 z-10">
         <div className="flex space-x-2">
           <motion.img
             src={heartImg}
@@ -76,12 +76,10 @@ const Home = () => {
           />
         </div>
         {isLoggedIn ? (
-          <h1 className="mb-12 dark:text-white text-center w-screen lg:text-white">
-            Welcome, {username}!
-          </h1>
+          <h1 className="mb-12  text-center w-screen ">Welcome, {username}!</h1>
         ) : (
           <>
-            <h1 className="mb-12 dark:text-white text-center w-screen lg:text-white">
+            <h1 className="mb-12  text-center w-screen ">
               Welcome to UltimateWebsite
             </h1>
             <div className="text-2xl flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-8">
