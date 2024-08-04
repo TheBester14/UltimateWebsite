@@ -6,6 +6,9 @@
 // const http = require("http");
 // const socketIo = require("socket.io");
 // const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+// const multer = require("multer");
+// const path = require("path");
+// const fs = require("fs");
 
 // // Create a new Express application
 // const app = express();
@@ -56,15 +59,35 @@
 
 // // Middleware for token authentication
 // const authenticateToken = (req, res, next) => {
-//   const token = req.headers["authorization"];
-//   if (!token) return res.sendStatus(403);
+//   const authHeader = req.headers["authorization"];
+//   const token = authHeader && authHeader.split(" ")[1];
+//   if (!token) {
+//     console.log("No token provided");
+//     return res.sendStatus(403);
+//   }
 
-//   jwt.verify(token.split(" ")[1], "secret_key", (err, user) => {
+//   jwt.verify(token, "secret_key", (err, user) => {
 //     if (err) return res.sendStatus(403);
 //     req.user = user;
 //     next();
 //   });
 // };
+
+// // Set up the storage engine for multer
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     const uploadPath = path.join(__dirname, "uploads");
+//     if (!fs.existsSync(uploadPath)) {
+//       fs.mkdirSync(uploadPath);
+//     }
+//     cb(null, uploadPath);
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`);
+//   },
+// });
+
+// const upload = multer({ storage: storage });
 
 // io.on("connection", (socket) => {
 //   console.log("New client connected");
@@ -89,9 +112,29 @@
 //     });
 //   });
 
-//   socket.on("make_move", ({ roomId, move, currentPlayer }) => {
-//     socket.to(roomId).emit("move_made", { move, currentPlayer });
-//   });
+//   socket.on(
+//     "make_move",
+//     ({
+//       roomId,
+//       move,
+//       inCheck,
+//       checkMate,
+//       currentPlayer,
+//       enPassant,
+//       hasMoved,
+//       board,
+//     }) => {
+//       socket.to(roomId).emit("move_made", {
+//         move,
+//         inCheck,
+//         checkMate,
+//         currentPlayer,
+//         enPassant,
+//         hasMoved,
+//         board,
+//       });
+//     }
+//   );
 
 //   socket.on("disconnect", () => {
 //     console.log("Client disconnected");
@@ -117,10 +160,14 @@
 //   const { email, username, password } = req.body;
 //   try {
 //     const hash = await bcrypt.hash(password, 10);
-//     await client
-//       .db("signup")
-//       .collection("users")
-//       .insertOne({ email, username, password: hash, timeSpent: 0 });
+//     await client.db("signup").collection("users").insertOne({
+//       email,
+//       username,
+//       password: hash,
+//       timeSpent: 0,
+//       timeSpentOnChess: 0,
+//       timeSpentOnTetris: 0,
+//     });
 //     res.send({ message: "User registered" });
 //   } catch (err) {
 //     res.status(500).send(err);
@@ -157,10 +204,15 @@
 
 // // Route to update time spent
 // app.post("/track-time", authenticateToken, async (req, res) => {
-//   const { timeSpent } = req.body;
+//   const { timeSpent, game } = req.body;
 //   const userId = new ObjectId(req.user.id);
 
 //   try {
+//     const update = { $inc: { timeSpent: timeSpent } };
+//     if (game) {
+//       update.$inc[`timeSpentOn${game}`] = timeSpent;
+//     }
+
 //     const result = await client
 //       .db("signup")
 //       .collection("users")
@@ -177,6 +229,7 @@
 //   }
 // });
 
+// // Route to update time spent on chess
 // // Route to get time spent
 // app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
 //   const userId = new ObjectId(req.params.id);
@@ -184,10 +237,16 @@
 //     const user = await client
 //       .db("signup")
 //       .collection("users")
-//       .findOne({ _id: userId }, { projection: { timeSpent: 1 } });
+//       .findOne(
+//         { _id: userId },
+//         { projection: { timeSpent: 1, timeSpentOnChess: 1 } }
+//       );
 
 //     if (user) {
-//       res.json({ totalTimeSpent: user.timeSpent || 0 });
+//       res.json({
+//         totalTimeSpent: user.timeSpent || 0,
+//         timeSpentOnChess: user.timeSpentOnChess || 0,
+//       });
 //     } else {
 //       res.status(404).send({ success: false, message: "User not found" });
 //     }
@@ -195,6 +254,38 @@
 //     res.status(500).send({ success: false, error: "Internal Server Error" });
 //   }
 // });
+
+// // Route to upload profile picture
+// app.post(
+//   "/upload-profile-pic",
+//   authenticateToken,
+//   upload.single("profilePic"),
+//   async (req, res) => {
+//     try {
+//       const userId = new ObjectId(req.user.id);
+//       const profilePicPath = req.file.path;
+
+//       const result = await client
+//         .db("signup")
+//         .collection("users")
+//         .updateOne({ _id: userId }, { $set: { profilePic: profilePicPath } });
+
+//       if (result.modifiedCount === 1) {
+//         res.json({
+//           success: true,
+//           message: "Profile picture updated successfully",
+//         });
+//       } else {
+//         res.status(404).json({ success: false, message: "User not found" });
+//       }
+//     } catch (err) {
+//       res.status(500).json({ success: false, error: "Internal Server Error" });
+//     }
+//   }
+// );
+
+// // Serve uploaded files
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // // Start the server
 // server.listen(5000, () => {
@@ -209,6 +300,9 @@ const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 // Create a new Express application
 const app = express();
@@ -259,15 +353,35 @@ connectToMongoDB();
 
 // Middleware for token authentication
 const authenticateToken = (req, res, next) => {
-  const token = req.headers["authorization"];
-  if (!token) return res.sendStatus(403);
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) {
+    console.log("No token provided");
+    return res.sendStatus(403);
+  }
 
-  jwt.verify(token.split(" ")[1], "secret_key", (err, user) => {
+  jwt.verify(token, "secret_key", (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
     next();
   });
 };
+
+// Set up the storage engine for multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, "uploads");
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath);
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 io.on("connection", (socket) => {
   console.log("New client connected");
@@ -340,10 +454,14 @@ app.post("/signup", async (req, res) => {
   const { email, username, password } = req.body;
   try {
     const hash = await bcrypt.hash(password, 10);
-    await client
-      .db("signup")
-      .collection("users")
-      .insertOne({ email, username, password: hash, timeSpent: 0 });
+    await client.db("signup").collection("users").insertOne({
+      email,
+      username,
+      password: hash,
+      timeSpent: 0,
+      timeSpentOnChess: 0,
+      timeSpentOnTetris: 0,
+    });
     res.send({ message: "User registered" });
   } catch (err) {
     res.status(500).send(err);
@@ -380,14 +498,19 @@ app.post("/login", async (req, res) => {
 
 // Route to update time spent
 app.post("/track-time", authenticateToken, async (req, res) => {
-  const { timeSpent } = req.body;
+  const { timeSpent, game } = req.body;
   const userId = new ObjectId(req.user.id);
 
   try {
+    const update = { $inc: { timeSpent: timeSpent } };
+    if (game) {
+      update.$inc[`timeSpentOn${game}`] = timeSpent;
+    }
+
     const result = await client
       .db("signup")
       .collection("users")
-      .updateOne({ _id: userId }, { $inc: { timeSpent: timeSpent } });
+      .updateOne({ _id: userId }, update);
 
     if (result.modifiedCount === 1) {
       res.json({ success: true, message: "Time tracked successfully" });
@@ -407,10 +530,23 @@ app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
     const user = await client
       .db("signup")
       .collection("users")
-      .findOne({ _id: userId }, { projection: { timeSpent: 1 } });
+      .findOne(
+        { _id: userId },
+        {
+          projection: {
+            timeSpent: 1,
+            timeSpentOnChess: 1,
+            timeSpentOnTetris: 1,
+          },
+        }
+      );
 
     if (user) {
-      res.json({ totalTimeSpent: user.timeSpent || 0 });
+      res.json({
+        totalTimeSpent: user.timeSpent || 0,
+        timeSpentOnChess: user.timeSpentOnChess || 0,
+        timeSpentOnTetris: user.timeSpentOnTetris || 0,
+      });
     } else {
       res.status(404).send({ success: false, message: "User not found" });
     }
@@ -418,6 +554,38 @@ app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
     res.status(500).send({ success: false, error: "Internal Server Error" });
   }
 });
+
+// Route to upload profile picture
+app.post(
+  "/upload-profile-pic",
+  authenticateToken,
+  upload.single("profilePic"),
+  async (req, res) => {
+    try {
+      const userId = new ObjectId(req.user.id);
+      const profilePicPath = req.file.path;
+
+      const result = await client
+        .db("signup")
+        .collection("users")
+        .updateOne({ _id: userId }, { $set: { profilePic: profilePicPath } });
+
+      if (result.modifiedCount === 1) {
+        res.json({
+          success: true,
+          message: "Profile picture updated successfully",
+        });
+      } else {
+        res.status(404).json({ success: false, message: "User not found" });
+      }
+    } catch (err) {
+      res.status(500).json({ success: false, error: "Internal Server Error" });
+    }
+  }
+);
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Start the server
 server.listen(5000, () => {

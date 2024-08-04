@@ -8,16 +8,28 @@ const Profile = () => {
   const [users, setUsers] = useState([]);
   const [profilePic, setProfilePic] = useState("default-profile.jpg"); // default profile picture
   const [selectedFile, setSelectedFile] = useState(null);
-  const { timeSpent, username: contextUsername } = useContext(TimeSpentContext);
+  const {
+    timeSpent,
+    timeSpentOnChess,
+    timeSpentOnTetris,
+    username: contextUsername,
+  } = useContext(TimeSpentContext);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const decodedToken = jwtDecode(token);
+    console.log("Token from localStorage:", decodedToken); // Debugging
     axios
-      .get("http://localhost:5000/users")
+      .get("http://localhost:5000/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log("Fetched users:", response.data); // Log the fetched data
         setUsers(response.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err + " error"));
   }, []);
 
   const handleFileChange = (event) => {
@@ -42,8 +54,11 @@ const Profile = () => {
     formData.append("profilePic", selectedFile);
 
     try {
-      const response = await fetch("/upload-profile-pic", {
+      const response = await fetch("http://localhost:5000/upload-profile-pic", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is sent for authentication
+        },
         body: formData,
       });
 
@@ -71,43 +86,39 @@ const Profile = () => {
         <h1 className="mb-12 dark:text-white lg:text-white text-center w-screen text-4xl mt-7 ">
           Here comes a new <Gameboy text="challenger!" />
         </h1>
-        <div className="contains-all-object flex flex-col md:flex-row  w-7/12  items-center justify-center ">
+        <div className="contains-all-object flex flex-col md:flex-row  w-7/12  items-center justify-center nt- ">
           <div className="flex flex-col items-center border-black-300  md:p-12 ">
-            <b className="text-xl text-white w-max">
+            <b className="text-xl text-white w-max  ">
               Username: {contextUsername}
               <br /> Hours on the site:
               {Math.floor(timeSpent / 60)} h {timeSpent % 60} min
               <br /> Game Score :
-              <br /> Game most played:
+              <br /> Time Spent On Chess: {Math.floor(
+                timeSpentOnChess / 60
+              )} h {timeSpentOnChess % 60} min
+              <br />
+              Time Spent On Tetris: {Math.floor(timeSpentOnTetris / 60)} h{" "}
+              {timeSpentOnTetris % 60} min
+              <br />
+              Most Played Game:{" "}
+              {timeSpentOnChess > timeSpentOnTetris ? "Chess" : "Tetris"}
             </b>
           </div>
-
-          <div className="profile-container flex flex-col items-center mt-16">
-            <img
-              id="profilePic "
-              src="https://via.placeholder.com/150"
-              alt="Profile"
-              className="profile-pic h-25 w-25"
-            />
-            <form onSubmit={handleSubmit} className="">
-              <label htmlFor="fileInput" className="custom-file-upload"></label>
-              <div className="flex flex-row transform -translate-x-0.5 text-xs">
-                <input
-                  type="file"
-                  id="fileInput"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className=""
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 rounded "
-                >
-                  Upload
-                </button>
-              </div>
-            </form>
-          </div>
+          <form onSubmit={handleSubmit} className="flex flex-col items-center">
+            <div className="profile-pic text-white">
+              <button className="text-2xl" onChange={handleFileChange}>
+                Profile Picture
+              </button>
+              <button type="submit" className="text-2xl mb-4">
+                Upload Img
+              </button>
+            </div>
+          </form>
+          <img
+            src={profilePic}
+            alt="Profile"
+            className="rounded-full w-32 h-32"
+          />
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import ChessIMG from "./ChessIMG.png";
 const images = [tetrisIMG, ChessIMG];
 
 const name = ["Tetris", "Chess"];
+const urls = ["http://localhost:3000/tetris", "http://localhost:3000/chess"];
 
 function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -38,8 +39,10 @@ function Home() {
             >
               {images.map((image, index) => (
                 <div className="slide" key={index}>
-                  <img src={image} alt={`slide-${index}`} />
-                  <h1 class="title">{name[index]}</h1>
+                  <a href={urls[index]} key={index}>
+                    <img src={image} alt={`slide-${index}`} />
+                    <h1 class="title">{name[index]}</h1>
+                  </a>
                 </div>
               ))}
             </div>

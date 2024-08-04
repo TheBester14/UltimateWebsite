@@ -15,8 +15,8 @@ import { TimeSpentProvider } from "./components/TimeSpentContext";
 
 function App() {
   return (
-    <TimeSpentProvider>
-      <Router>
+    <Router>
+      <TimeSpentProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -29,8 +29,8 @@ function App() {
           <Route path="/tetris" element={<Tetris />} />
           <Route path="/jeuUnity" element={<JeuUnity />} />
         </Routes>
-      </Router>
-    </TimeSpentProvider>
+      </TimeSpentProvider>
+    </Router>
   );
 }
 
