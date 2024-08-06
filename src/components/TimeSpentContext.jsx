@@ -8,6 +8,7 @@ export const TimeSpentProvider = ({ children }) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [timeSpentOnChess, setTimeSpentOnChess] = useState(0);
   const [timeSpentOnTetris, setTimeSpentOnTetris] = useState(0);
+  const [timeSpentOnSpaceInv, setTimeSpentOnSpaceInv] = useState(0);
   const [username, setUsername] = useState(null);
   const location = useLocation();
 
@@ -40,6 +41,7 @@ export const TimeSpentProvider = ({ children }) => {
           setTimeSpent(data.totalTimeSpent || 0);
           setTimeSpentOnChess(data.timeSpentOnChess || 0); // Set game-specific time
           setTimeSpentOnTetris(data.timeSpentOnTetris || 0); // Set game-specific time
+          setTimeSpentOnSpaceInv(data.timeSpentOnSpaceInv || 0); // Set game-specific time
         })
         .catch((error) => console.error("Error fetching time spent:", error));
 
@@ -47,6 +49,7 @@ export const TimeSpentProvider = ({ children }) => {
       const intervalId = setInterval(() => {
         const isChessPage = location.pathname === "/chess";
         const isTetrisPage = location.pathname === "/tetris";
+        const isSpaceInvPage = location.pathname === "/jeuUnity";
         setTimeSpent((prevTime) => {
           const updatedTime = prevTime + 1;
           console.log(`Updating time spent: ${updatedTime}`); // Debugging
@@ -62,7 +65,13 @@ export const TimeSpentProvider = ({ children }) => {
             },
             body: JSON.stringify({
               timeSpent: 1,
-              game: isChessPage ? "Chess" : isTetrisPage ? "Tetris" : null,
+              game: isChessPage
+                ? "Chess"
+                : isTetrisPage
+                ? "Tetris"
+                : isSpaceInvPage
+                ? "SpaceInv"
+                : null,
             }),
           })
             .then((response) => {
@@ -85,6 +94,10 @@ export const TimeSpentProvider = ({ children }) => {
         if (isTetrisPage) {
           setTimeSpentOnTetris((prevTime) => prevTime + 1); // Update game-specific time if on tetris page
         }
+
+        if (isSpaceInvPage) {
+          setTimeSpentOnSpaceInv((prevTime) => prevTime + 1); // Update game-specific time if on space inv page
+        }
       }, 60000); // Every 1 minute
 
       return () => clearInterval(intervalId); // Clean up
@@ -93,7 +106,13 @@ export const TimeSpentProvider = ({ children }) => {
 
   return (
     <TimeSpentContext.Provider
-      value={{ timeSpent, timeSpentOnChess, timeSpentOnTetris, username }}
+      value={{
+        timeSpent,
+        timeSpentOnChess,
+        timeSpentOnTetris,
+        timeSpentOnSpaceInv,
+        username,
+      }}
     >
       {children}
     </TimeSpentContext.Provider>

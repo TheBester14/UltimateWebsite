@@ -461,6 +461,7 @@ app.post("/signup", async (req, res) => {
       timeSpent: 0,
       timeSpentOnChess: 0,
       timeSpentOnTetris: 0,
+      timeSpentOnSpaceInv: 0,
     });
     res.send({ message: "User registered" });
   } catch (err) {
@@ -537,6 +538,7 @@ app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
             timeSpent: 1,
             timeSpentOnChess: 1,
             timeSpentOnTetris: 1,
+            timeSpentOnSpaceInv: 1,
           },
         }
       );
@@ -546,6 +548,7 @@ app.get("/get-time-spent/:id", authenticateToken, async (req, res) => {
         totalTimeSpent: user.timeSpent || 0,
         timeSpentOnChess: user.timeSpentOnChess || 0,
         timeSpentOnTetris: user.timeSpentOnTetris || 0,
+        timeSpentOnSpaceInv: user.timeSpentOnSpaceInv || 0,
       });
     } else {
       res.status(404).send({ success: false, message: "User not found" });

@@ -12,8 +12,22 @@ const Profile = () => {
     timeSpent,
     timeSpentOnChess,
     timeSpentOnTetris,
+    timeSpentOnSpaceInv,
     username: contextUsername,
   } = useContext(TimeSpentContext);
+
+  const getMostPlayedGame = () => {
+    if (
+      timeSpentOnTetris > timeSpentOnChess &&
+      timeSpentOnTetris > timeSpentOnSpaceInv
+    ) {
+      return "Tetris";
+    } else if (timeSpentOnSpaceInv > timeSpentOnChess) {
+      return "Space Invaders";
+    }
+
+    return "Chess";
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -82,17 +96,16 @@ const Profile = () => {
         alt=""
       />
 
-      <div className="bg-1000 text-5xl flex flex-col items-center absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/4">
+      <div className="bg-1000 text-5xl flex flex-col items-center absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/4 ">
         <h1 className="mb-12 dark:text-white lg:text-white text-center w-screen text-4xl mt-7 ">
           Here comes a new <Gameboy text="challenger!" />
         </h1>
-        <div className="contains-all-object flex flex-col md:flex-row  w-7/12  items-center justify-center nt- ">
+        <div className="contains-all-object flex flex-col md:flex-row  w-7/12  items-center justify-center">
           <div className="flex flex-col items-center border-black-300  md:p-12 ">
             <b className="text-xl text-white w-max  ">
               Username: {contextUsername}
               <br /> Hours on the site:
               {Math.floor(timeSpent / 60)} h {timeSpent % 60} min
-              <br /> Game Score :
               <br /> Time Spent On Chess: {Math.floor(
                 timeSpentOnChess / 60
               )} h {timeSpentOnChess % 60} min
@@ -100,25 +113,13 @@ const Profile = () => {
               Time Spent On Tetris: {Math.floor(timeSpentOnTetris / 60)} h{" "}
               {timeSpentOnTetris % 60} min
               <br />
-              Most Played Game:{" "}
-              {timeSpentOnChess > timeSpentOnTetris ? "Chess" : "Tetris"}
+              Time Spent On Space Invaders:{" "}
+              {Math.floor(timeSpentOnSpaceInv / 60)} h{" "}
+              {timeSpentOnSpaceInv % 60} min
+              <br />
+              Most Played Game: {getMostPlayedGame()}
             </b>
           </div>
-          <form onSubmit={handleSubmit} className="flex flex-col items-center">
-            <div className="profile-pic text-white">
-              <button className="text-2xl" onChange={handleFileChange}>
-                Profile Picture
-              </button>
-              <button type="submit" className="text-2xl mb-4">
-                Upload Img
-              </button>
-            </div>
-          </form>
-          <img
-            src={profilePic}
-            alt="Profile"
-            className="rounded-full w-32 h-32"
-          />
         </div>
       </div>
     </div>
