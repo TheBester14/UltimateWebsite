@@ -293,10 +293,16 @@ export const isCheckMate = (player, board) => {
   });
 
   console.log(`Valid king moves after verification: ${validKingMoves}`);
+  console.log(`Valid king moves length: ${validKingMoves.length}`);
 
   // If the king has valid moves, it's not checkmate
   if (validKingMoves.length > 0) {
     return false;
+  }
+
+  if (validKingMoves.length === 0) {
+    console.log(`${player} king is in checkmate`);
+    return true;
   }
 
   // Check if any piece can capture the threatening piece or block the threat
