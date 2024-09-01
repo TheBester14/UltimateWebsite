@@ -19,16 +19,19 @@ export const isValidPosition = (shape, posX, posY, stage) => {
           newX >= stage[newY].length - 1 || // Check right border
           stage[newY][newX].value !== 0 // Check if cell is occupied
         ) {
+          console.log("false");
           return false;
         }
       }
     }
   }
+  console.log("true");
   return true;
 };
 
 export const placeTetromino = (matrix, tetromino, posX, posY) => {
   const newMatrix = matrix.map((row) => row.map((cell) => ({ ...cell })));
+
   for (let y = 0; y < tetromino.shape.length; y++) {
     for (let x = 0; x < tetromino.shape[y].length; x++) {
       if (tetromino.shape[y][x] !== 0) {
@@ -43,6 +46,32 @@ export const placeTetromino = (matrix, tetromino, posX, posY) => {
         ) {
           newMatrix[newY][newX] = {
             value: tetromino.shape[y][x],
+            cellFormat: tetromino.cellFormat,
+          };
+        }
+      }
+    }
+  }
+  return newMatrix;
+};
+
+export const placeTetrominoAI = (matrix, tetromino, posX, posY) => {
+  const newMatrix = matrix.map((row) => row.map((cell) => ({ ...cell })));
+
+  for (let y = 0; y < tetromino.length; y++) {
+    for (let x = 0; x < tetromino[y].length; x++) {
+      if (tetromino[y][x] !== 0) {
+        const newY = y + posY;
+        const newX = x + posX;
+        if (
+          newY > 0 && // Ne pas écraser la première ligne de la bordure
+          newY < newMatrix.length - 1 && // Ne pas écraser la dernière ligne de la bordure
+          newX > 0 && // Ne pas écraser la première colonne de la bordure
+          newX < newMatrix[newY].length - 1 && // Ne pas écraser la dernière colonne de la bordure
+          newMatrix[newY][newX].value === 0
+        ) {
+          newMatrix[newY][newX] = {
+            value: tetromino[y][x],
             cellFormat: tetromino.cellFormat,
           };
         }

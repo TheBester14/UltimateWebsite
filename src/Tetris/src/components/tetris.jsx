@@ -18,6 +18,7 @@ const Tetris = () => {
     currentScore,
     rotateTetromino,
     startGame,
+    startAIGame,
     dropTetrominoToBottom,
     previsualizeTetrominoAtBottom,
     activeTetrominoRef,
@@ -77,8 +78,6 @@ const Tetris = () => {
   const renderGhostPiece = () => {
     const { shape } = activeTetrominoRef.current;
 
-    console.log(ghostPiecePosition.x, ghostPiecePosition.y);
-
     return shape.map((row, rowIndex) =>
       row.map((cell, colIndex) =>
         cell ? (
@@ -87,7 +86,7 @@ const Tetris = () => {
             style={{
               position: "absolute",
               top: `${(ghostPiecePosition.y + rowIndex) * 30 + 22}px`,
-              left: `${(ghostPiecePosition.x + colIndex) * 30 + 250}px`,
+              left: `${(ghostPiecePosition.x + colIndex) * 30 + 200}px`,
               width: "30px",
               height: "30px",
               border: "1px solid rgba(0, 0, 0, 0.8)", // Ajout d'une bordure pour une meilleure visibilité
@@ -138,13 +137,22 @@ const Tetris = () => {
         className="absolute inset-0 flex items-center justify-center"
         style={{ zIndex: 1 }}
       >
-        <div className="text-3xl flex flex-col items-center">
+        <div className="menu text-xl flex flex-col items-center">
           {inMenu ? (
-            <Menu startGame={startGame} setIsIndex={setIsIndex} />
+            <Menu
+              startGame={startGame}
+              startGameAi={startAIGame}
+              setIsIndex={setIsIndex}
+            />
           ) : gameOver ? (
             <div style={{ textAlign: "center" }}>
               <h1>Game Over</h1>
-              <button onClick={startGame}>Try Again</button>
+              <br />
+
+              <button onClick={startGame}>one player mod</button>
+              <br />
+
+              <button>Ai mod (one day)</button>
             </div>
           ) : (
             <div
