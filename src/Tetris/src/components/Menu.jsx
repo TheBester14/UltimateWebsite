@@ -4,7 +4,7 @@ import audioFile from "../asset/Gameboy Startup Sound.mp3";
 import music from "../asset/Game Boy Tetris Music B.mp3";
 import "./Menu.css";
 
-const Menu = ({ startGame, setIsIndex }) => {
+const Menu = ({ startGame, startGameAi, setIsIndex }) => {
   const audioRef = useRef(null);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -27,6 +27,14 @@ const Menu = ({ startGame, setIsIndex }) => {
       audioRef.current.currentTime = 0;
     }
     startGame();
+  };
+
+  const handleStartGameAi = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    startGameAi();
   };
 
   useEffect(() => {
@@ -60,12 +68,16 @@ const Menu = ({ startGame, setIsIndex }) => {
           <div style={centerStyle}>
             <h1>Welcome to old-new Tetris! </h1>
             <br />
-            <button style={{ zIndex: 1 }} onClick={handleStartGame}>
+            <button
+              class="button"
+              style={{ zIndex: 1 }}
+              onClick={handleStartGame}
+            >
               Start Game
             </button>
             <br />
-            <button style={{ zIndex: 1 }} onClick={handleStartGame}>
-              AI Input
+            <button class="button" style={{ zIndex: 1 }}>
+              AI Input (one day)
             </button>
           </div>
         </motion.div>
